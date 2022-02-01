@@ -10,7 +10,7 @@
 
 using namespace cxxconfig;
 
-// Config::Config(void) { this->parent = nullptr; }
+// Config::Config() { this->parent = nullptr; }
 
 // Config::Config(const Config &other) : Config() {
 // 	// TODO add copy
@@ -49,7 +49,7 @@ using namespace cxxconfig;
 // 	}
 // }
 
-// void Config::printTable(void) const { this->printTable(SystemInfo::getStdOut()); }
+// void Config::printTable() const { this->printTable(SystemInfo::getStdOut()); }
 
 // void Config::printTable(Ref<IO> &io) const {
 
@@ -593,7 +593,7 @@ using namespace cxxconfig;
 // 	json_tokener_free(jsonTokener);
 // }
 
-// Config::~Config(void) {
+// Config::~Config() {
 // 	/*  Release all resources.  */
 
 // 	/*  */
@@ -606,4 +606,4 @@ using namespace cxxconfig;
 // 	}
 // }
 
-// Config *Config::getSuperInstance(void) { return new Config(); }
+// Config *Config::getSuperInstance() { return new Config(); }

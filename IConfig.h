@@ -26,12 +26,12 @@ namespace cxxconfig {
 
 	template <typename T> class ValueType : public AbstractValue {
 	  public:
-		ValueType(void) = delete;
+		ValueType() = delete;
 		ValueType(const T &t) : value(t) {}
 
 		ValueType &operator=(const ValueType &other) = default;
 
-		const T &getValue(void) const noexcept {
+		const T &getValue() const noexcept {
 #ifdef CXXCONF_NO_RTTI
 			return static_cast<const T &>(this->value);
 #else
@@ -39,7 +39,7 @@ namespace cxxconfig {
 #endif
 		}
 
-		// T getValue(void) noexcept { return this->value; }
+		// T getValue() noexcept { return this->value; }
 
 		// 		template <typename U> const U &as() const {
 		// 			// if (m_value == nullptr) {
@@ -48,7 +48,7 @@ namespace cxxconfig {
 		virtual void encode(std::string &code) {}
 		void decode(const std::string &code) {}
 
-		virtual unsigned int getHashCode(void) { return typeid(T).hash_code(); }
+		virtual unsigned int getHashCode() { return typeid(T).hash_code(); }
 
 	  private:
 		T value;
@@ -66,7 +66,7 @@ namespace cxxconfig {
 	 */
 	class Config : public ITree<Config> {
 	  public:
-		virtual ~Config(void);
+		virtual ~Config();
 
 	  public: /*	Get and set methods.	*/
 		/**
@@ -79,7 +79,7 @@ namespace cxxconfig {
 			YAML = 2, /*  */
 			JSON = 3, /*  */
 			INI = 4,
-			Custom = (unsigned int)(-1)
+			Custom = 1000
 		};
 
 		template <class T> const T &get(const std::string &key) const {
@@ -147,7 +147,7 @@ namespace cxxconfig {
 		 * Print all elements in the configuration
 		 * object.
 		 */
-		virtual void printTable(void) const;
+		virtual void printTable() const;
 
 		/**
 		 * Print all elements in the configuration
@@ -163,8 +163,8 @@ namespace cxxconfig {
 
 		// virtual void parseConfigFile(Ref<IO> &io, ConfigFormat format = ConfigFormat::Unknown);
 
-		// virtual size_t getNrElements(void) const noexcept;
-		// virtual const std::vector<std::string&>& getKeys(void) const;
+		// virtual size_t getNrElements() const noexcept;
+		// virtual const std::vector<std::string&>& getKeys() const;
 
 	  private: /*	Internal methods.	*/
 		/**
@@ -246,11 +246,11 @@ namespace cxxconfig {
 		// template <class T> class IConfigIterator : public Iterator<T> { /*	*/
 		// };
 		// TODO add iterator for config arguments.
-		// virtual Iterator getIterator(void);
+		// virtual Iterator getIterator();
 
 		virtual void setName(const std::string &name);
-		virtual const std::string &getName(void) const noexcept;
-		virtual std::string getName(void) noexcept;
+		virtual const std::string &getName() const noexcept;
+		virtual std::string getName() noexcept;
 
 	  protected:
 		// virtual void parse_xml(Ref<IO> &io);
@@ -266,10 +266,10 @@ namespace cxxconfig {
 		// static void parse_json_recursive_config(Config *config, struct json_object *root);
 
 	  public:
-		// virtual Config *getSuperInstance(void);
+		// virtual Config *getSuperInstance();
 
 	  public:
-		Config(void) = default;
+		Config() = default;
 		Config(const Config &other) = default;
 		Config(Config &&other) = default;
 
