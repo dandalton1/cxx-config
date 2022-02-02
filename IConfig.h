@@ -1,5 +1,5 @@
-#ifndef _FRAG_CORE_ICONFIG_H_
-#define _FRAG_CORE_ICONFIG_H_ 1
+#ifndef _CXX_CONFIG_H_
+#define _CXX_CONFIG_H_ 1
 #include "ITree.h"
 #include <cctype>
 #include <cstring>
@@ -35,7 +35,7 @@ namespace cxxconfig {
 #ifdef CXXCONF_NO_RTTI
 			return static_cast<const T &>(this->value);
 #else
-			return dynamic_cast<const T &>(this->value);
+			return reinterpret_cast<const T &>(this->value);
 #endif
 		}
 
@@ -54,7 +54,15 @@ namespace cxxconfig {
 		T value;
 	};
 	//	template void ValueType::decode<int>(const std::string &code);
-	template class ValueType<float>;
+	using float_t = float;
+	using int_t = int;
+	using string_t = std::string;
+	using bool_t = bool;
+
+	template class ValueType<float_t>;
+	template class ValueType<int_t>;
+	template class ValueType<string_t>;
+	template class ValueType<bool_t>;
 
 	// class Config;
 	// template class ValueType<Config>;
@@ -66,7 +74,13 @@ namespace cxxconfig {
 	 */
 	class Config : public ITree<Config> {
 	  public:
-		virtual ~Config();
+		Config() {}
+		Config(const Config &other) {}
+		Config(Config &&other) {}
+		virtual ~Config() {}
+
+		Config &operator=(const Config &other) { return *this; }
+		Config &operator=(Config &&other) { return *this; }
 
 	  public: /*	Get and set methods.	*/
 		/**
@@ -147,7 +161,7 @@ namespace cxxconfig {
 		 * Print all elements in the configuration
 		 * object.
 		 */
-		virtual void printTable() const;
+		virtual void printTable() const {}
 
 		/**
 		 * Print all elements in the configuration
@@ -248,9 +262,9 @@ namespace cxxconfig {
 		// TODO add iterator for config arguments.
 		// virtual Iterator getIterator();
 
-		virtual void setName(const std::string &name);
-		virtual const std::string &getName() const noexcept;
-		virtual std::string getName() noexcept;
+		// virtual void setName(const std::string &name);
+		// virtual const std::string &getName() const noexcept;
+		// virtual std::string getName() noexcept;
 
 	  protected:
 		// virtual void parse_xml(Ref<IO> &io);
@@ -267,14 +281,6 @@ namespace cxxconfig {
 
 	  public:
 		// virtual Config *getSuperInstance();
-
-	  public:
-		Config() = default;
-		Config(const Config &other) = default;
-		Config(Config &&other) = default;
-
-		Config &operator=(const Config &other) = default;
-		Config &operator=(Config &&other) = default;
 
 	  protected: /*	*/
 		/*  Config tree hierarchy.  */

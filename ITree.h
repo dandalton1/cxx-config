@@ -1,6 +1,6 @@
 
-#ifndef _FRAG_CORE_TREE_H_
-#define _FRAG_CORE_TREE_H_ 1
+#ifndef _CXXCONFIG_ITREE_H_
+#define _CXXCONFIG_ITREE_H_ 1
 #include <cassert>
 #include <stdexcept>
 
@@ -66,8 +66,8 @@ namespace cxxconfig {
 		}
 
 		virtual ITree<T> *getChild(unsigned int index) const {
-			if (index >= this->getNumChildren())
-				throw std::runtime_error("Exceeded {} has {}", index, this->getNumChildren());
+			// if (index >= this->getNumChildren())
+			// 	throw std::runtime_error("Exceeded {} has {}", index, this->getNumChildren());
 			ITree<T> *chi = this->child;
 			for (unsigned int x = 0; x <= index; x++) {
 				chi = chi->sibling;
