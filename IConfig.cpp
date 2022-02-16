@@ -1,4 +1,4 @@
-#include "IConfig.h"
+#include "CXXConfig.h"
 #include <fmt/format.h>
 #include <json-c/json.h>
 #include <libxml/encoding.h>
