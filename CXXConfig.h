@@ -62,6 +62,7 @@ namespace cxxconfig {
 	  private:
 		T value;
 	};
+
 	//	template void ValueType::decode<int>(const std::string &code);
 	using float_t = float;
 	using int_t = int;
@@ -80,6 +81,12 @@ namespace cxxconfig {
 
 	class IConfigBase {
 	  public:
+		virtual void setName(const std::string &name) { this->name = name; }
+		virtual const std::string &getName() const noexcept { return name; }
+		virtual std::string getName() noexcept { return name; }
+
+	  private:
+		std::string name;
 	};
 
 	/**
@@ -88,17 +95,33 @@ namespace cxxconfig {
 	 */
 	class IConfig : public ITree<ValueType<IConfigBase>>, public ValueType<IConfigBase> {
 	  public:
-		IConfig(IConfig *parent = nullptr) : ValueType(*this) {}
-		//IConfig(const IConfig &other) {}
-		//IConfig(IConfig &&other) {}
+	  	/**
+	  	 * @brief Construct a new IConfig object
+	  	 *
+	  	 * @param parent
+	  	 */
+		IConfig(IConfig *parent = nullptr) : ValueType(*this) { this->setParent(parent); }
 		virtual ~IConfig() {}
 
 		IConfig &operator=(const IConfig &other) { return *this; }
 		IConfig &operator=(IConfig &&other) { return *this; }
 
 	  public: /*	Get and set methods.	*/
+			  /**
+			   * @brief
+			   *
+			   * @param key
+			   * @return const AbstractValue&
+			   */
 		const AbstractValue &operator[](const std::string &key) { return *this->va_va[key]; }
 
+		/**
+		 * @brief
+		 *
+		 * @tparam T
+		 * @param key
+		 * @return T
+		 */
 		template <class T> T get(const std::string &key) const {
 			/*	Check if valid type.	*/
 			// ValueType<T> v;
@@ -109,6 +132,7 @@ namespace cxxconfig {
 			return this->va_va.at(key)->as<T>().getValue();
 		}
 		template <class T> T &get_ref(const std::string &key) const {}
+		template <class T> T *get_ref(const std::string &key) const {}
 
 		template <class T> void set(const std::string &key, const T &value) /*noexcept(noexcept(isSet(key)))*/ {
 			static_assert(std::is_class<ValueType<T>>::value || std::is_floating_point<T>::value ||
@@ -141,10 +165,6 @@ namespace cxxconfig {
 
 		// virtual std::map<std::string, AbstractValue *>::const_pointer begin() const { return
 		// this->va_va.cbegin(); }
-
-		virtual void setName(const std::string &name) {}
-		virtual const std::string &getName() const noexcept {}
-		virtual std::string getName() noexcept {}
 
 	  protected: /*	*/
 		/*  Config tree hierarchy.  */

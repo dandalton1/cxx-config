@@ -1,16 +1,38 @@
-
+/*
+ * Copyright (c) 2021 Valdemar Lindberg
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 #ifndef _CXXCONFIG_ITREE_H_
 #define _CXXCONFIG_ITREE_H_ 1
 #include <cassert>
+#include <memory>
 #include <stdexcept>
 
 namespace cxxconfig {
 
 	/**
+	 * @brief
 	 *
+	 * @tparam T
 	 */
-	template <class T> // TODO evoluate.
-	class ITree {
+	template <class T> class ITree {
 	  public:
 		ITree() {
 			this->sibling = nullptr;
@@ -18,8 +40,16 @@ namespace cxxconfig {
 			this->child = nullptr;
 			this->parent = nullptr;
 		}
-		ITree(ITree &&other) {}
+		ITree(ITree &&other) {
+			this->parent = std::exchange(other.parent, nullptr);
+			this->child = std::exchange(other.child, nullptr);
+			this->sibling = std::exchange(other.sibling, nullptr);
+			this->numChildren = other.numChildren;
+		}
 		virtual ~ITree() {}
+
+		ITree<T> &operator=(const ITree<T> &other) { return *this; }
+		ITree<T> &operator=(ITree<T> &&other) { return *this; }
 
 		virtual ITree<T> *root() const noexcept {
 			if (this->getParent() != nullptr)
@@ -59,6 +89,7 @@ namespace cxxconfig {
 		}
 
 		virtual void removeChild(unsigned int index) {
+			assert(index >= 0);
 			ITree<T> *sn = getChild(index - 1);
 			ITree<T> *n = sn->sibling;
 			sn->setSibling(n->sibling);
@@ -66,8 +97,7 @@ namespace cxxconfig {
 		}
 
 		virtual ITree<T> *getChild(unsigned int index) const {
-			// if (index >= this->getNumChildren())
-			// 	throw std::runtime_error("Exceeded {} has {}", index, this->getNumChildren());
+			assert(index >= 0);
 			ITree<T> *chi = this->child;
 			for (unsigned int x = 0; x <= index; x++) {
 				chi = chi->sibling;
@@ -76,6 +106,7 @@ namespace cxxconfig {
 		}
 
 		virtual int getNodeChildIndex(ITree<T> *node) {
+			assert(node);
 			ITree<T> *n = this->child;
 			int i = 0;
 			while (n) {
@@ -88,65 +119,6 @@ namespace cxxconfig {
 			}
 			return -1;
 		}
-
-		// class TIterator : public Iterator<T> {
-		//   public:
-		// 	/*			TIterator &operator++() override {
-		// 					return Iterator::operator++();
-		// 				}
-
-		// 				TIterator &operator++(int i) override {
-		// 					return Iterator::operator++(i);
-		// 				}
-
-		// 				TIterator &operator--() override {
-		// 					return Iterator::operator--();
-		// 				}
-
-		// 				TIterator &operator+=(int n) override {
-		// 					return Iterator::operator+=(n);
-		// 				}
-
-		// 				TIterator &operator-=(int n) override {
-		// 					return Iterator::operator-=(n);
-		// 				}
-
-		// 				TIterator &operator+(int n) override {
-		// 					return Iterator::operator+(n);
-		// 				}
-
-		// 				TIterator &operator-(int n) override {
-		// 					return Iterator::operator-(n);
-		// 				}
-
-		// 				TIterator &operator[](int index) const override {
-		// 					return Iterator::operator[](index);
-		// 				}
-
-		// 				T &operator->() const override {
-		// 					return Iterator::operator->();
-		// 				}
-
-		// 				T &operator*() const override {
-		// 					return Iterator::operator*();
-		// 				}
-
-		// 				T &operator*() override {
-		// 					return Iterator::operator*();
-		// 				}
-
-		// 				bool operator==(const TIterator &iterator) override {
-		// 					return Iterator::operator==(iterator);
-		// 				}
-
-		// 				bool operator!=(const TIterator &iterator) override {
-		// 					return Iterator::operator!=(iterator);
-		// 				}
-
-		// 				Iterator<T> &operator=(const TIterator &iterator) override {
-		// 					return Iterator::operator=(iterator);
-		// 				}*/
-		// };
 
 		/*  TODO determine if iterator can be added.    */
 		//		virtual TIterator<T> begin();
