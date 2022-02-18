@@ -38,7 +38,7 @@ namespace cxxconfig {
 		ValueType() = delete;
 		ValueType(const T &t) : value(t) {}
 
-		ValueType &operator=(const ValueType &other) = default;
+		ValueType &operator=(const ValueType &other) { return *this; }
 
 		const T &getValue() const noexcept {
 #ifdef CXXCONF_NO_RTTI
@@ -95,24 +95,26 @@ namespace cxxconfig {
 	 */
 	class IConfig : public ITree<ValueType<IConfigBase>>, public ValueType<IConfigBase> {
 	  public:
-	  	/**
-	  	 * @brief Construct a new IConfig object
-	  	 *
-	  	 * @param parent
-	  	 */
+		/**
+		 * @brief Construct a new IConfig object
+		 *
+		 * @param parent
+		 */
 		IConfig(IConfig *parent = nullptr) : ValueType(*this) { this->setParent(parent); }
+		IConfig(const IConfig &other) : ValueType(*this) {}
+		IConfig(IConfig &&other) : ValueType(*this) {}
 		virtual ~IConfig() {}
 
 		IConfig &operator=(const IConfig &other) { return *this; }
 		IConfig &operator=(IConfig &&other) { return *this; }
 
 	  public: /*	Get and set methods.	*/
-			  /**
-			   * @brief
-			   *
-			   * @param key
-			   * @return const AbstractValue&
-			   */
+		/**
+		 * @brief
+		 *
+		 * @param key
+		 * @return const AbstractValue&
+		 */
 		const AbstractValue &operator[](const std::string &key) { return *this->va_va[key]; }
 
 		/**
@@ -143,8 +145,7 @@ namespace cxxconfig {
 							  std::is_integral<T>::value,
 						  "Must be a supported type");
 			auto v = new ValueType<T>(value);
-
-			va_va[key] = static_cast<AbstractValue *>(v);
+			this->va_va[key] = static_cast<AbstractValue *>(v);
 		}
 
 		/**
@@ -152,7 +153,11 @@ namespace cxxconfig {
 		 * @param key
 		 * @return
 		 */
-		virtual IConfig &getSubConfig(const std::string &key) {}
+		virtual IConfig &getSubConfig(const std::string &key) {
+			IConfig config(this);
+			this->set(key, config);
+			return this->get<IConfig &>(key);
+		}
 		virtual bool tryGetSubConfig(const std::string &key, IConfig &config) {
 			if (this->getNumChildren() <= 0)
 				return false;
@@ -174,8 +179,6 @@ namespace cxxconfig {
 		/*  Config tree hierarchy.  */
 		std::map<std::string, ITree<IConfig> *> _mapSubConfig; /*  */
 		std::map<std::string, AbstractValue *> va_va;
-
-		std::map<std::string, Blob> bconfig;
 	};
 
 	class CXXConfig : public IConfig {
