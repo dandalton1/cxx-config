@@ -131,8 +131,12 @@ namespace cxxconfig {
 						  "");
 			return this->va_va.at(key)->as<T>().getValue();
 		}
-		template <class T> T &get_ref(const std::string &key) const {}
-		template <class T> T *get_ref(const std::string &key) const {}
+		template <class T> T &get_ref(const std::string &key) const {
+			return this->va_va.at(key)->as<T &>().getValue();
+		}
+		template <class T> T *get_ref(const std::string &key) const {
+			return this->va_va.at(key)->as<T *>().getValue();
+		}
 
 		template <class T> void set(const std::string &key, const T &value) /*noexcept(noexcept(isSet(key)))*/ {
 			static_assert(std::is_class<ValueType<T>>::value || std::is_floating_point<T>::value ||

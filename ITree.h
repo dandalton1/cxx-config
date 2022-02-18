@@ -89,7 +89,6 @@ namespace cxxconfig {
 		}
 
 		virtual void removeChild(unsigned int index) {
-			assert(index >= 0);
 			ITree<T> *sn = getChild(index - 1);
 			ITree<T> *n = sn->sibling;
 			sn->setSibling(n->sibling);
@@ -97,7 +96,6 @@ namespace cxxconfig {
 		}
 
 		virtual ITree<T> *getChild(unsigned int index) const {
-			assert(index >= 0);
 			ITree<T> *chi = this->child;
 			for (unsigned int x = 0; x <= index; x++) {
 				chi = chi->sibling;
