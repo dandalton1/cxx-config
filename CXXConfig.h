@@ -81,6 +81,9 @@ namespace cxxconfig {
 
 	class IConfigBase {
 	  public:
+		IConfigBase() = default;
+
+	  public:
 		virtual void setName(const std::string &name) { this->name = name; }
 		virtual const std::string &getName() const noexcept { return name; }
 		virtual std::string getName() noexcept { return name; }
@@ -158,6 +161,7 @@ namespace cxxconfig {
 			this->set(key, config);
 			return this->get<IConfig &>(key);
 		}
+
 		virtual bool tryGetSubConfig(const std::string &key, IConfig &config) {
 			if (this->getNumChildren() <= 0)
 				return false;
