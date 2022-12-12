@@ -9,8 +9,23 @@ TEST_P(ConfigSetGet, Default_Constructor_No_Throw) { ASSERT_NO_THROW(CXXConfig c
 
 TEST_P(ConfigSetGet, Get_Reference_No_Throw) {
 	CXXConfig config;
-	config.set("key", 0);
-	EXPECT_EQ(config.get_ref<int>("key"), 0);
+	int rand_value = rand();
+	config.set("key", rand_value);
+	EXPECT_EQ(config.get<int>("key"), rand_value);
+}
+
+TEST_P(ConfigSetGet, Get_Sub_Config) {
+	CXXConfig config;
+	ASSERT_NO_THROW(IConfig &sub_conf = config.getSubConfig("candy"));
+}
+
+TEST_P(ConfigSetGet, Get_Sub_Config_Values) {
+	CXXConfig config;
+	IConfig &sub_conf = config.getSubConfig("candy");
+
+	int rand_value = rand();
+	config.set("key", rand_value);
+	EXPECT_EQ(config.get<int>("key"), rand_value);
 }
 
 INSTANTIATE_TEST_SUITE_P(Base, ConfigSetGet,

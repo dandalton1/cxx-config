@@ -35,10 +35,13 @@ namespace cxxconfig {
 	template <typename T> class ValueType : public AbstractValue {
 	  public:
 		using ObjecType = T;
-		ValueType() = delete;
+		ValueType() = default;
 		ValueType(const T &t) : value(t) {}
 
-		ValueType &operator=(const ValueType &other) { return *this; }
+		ValueType &operator=(const ValueType &other) {
+			this->value = other.value;
+			return *this;
+		}
 
 		const T &getValue() const noexcept {
 #ifdef CXXCONF_NO_RTTI
@@ -82,6 +85,7 @@ namespace cxxconfig {
 	class IConfigBase {
 	  public:
 		IConfigBase() = default;
+		IConfigBase(const IConfigBase &other) = default;
 
 	  public:
 		virtual void setName(const std::string &name) { this->name = name; }
@@ -103,9 +107,9 @@ namespace cxxconfig {
 		 *
 		 * @param parent
 		 */
-		IConfig(IConfig *parent = nullptr) : ValueType(*this) { this->setParent(parent); }
-		IConfig(const IConfig &other) : ValueType(*this) {}
-		IConfig(IConfig &&other) : ValueType(*this) {}
+		IConfig(IConfig *parent = nullptr) { this->setParent(parent); }
+		IConfig(const IConfig &other) {}
+		IConfig(IConfig &&other) {}
 		virtual ~IConfig() {}
 
 		IConfig &operator=(const IConfig &other) { return *this; }
@@ -200,11 +204,14 @@ namespace cxxconfig {
 			Custom = 1000
 		};
 
+		CXXConfig() = default;
+		//	virtual ~CXXConfig = default;
+
 		/**
 		 * Print all elements in the configuration
 		 * object.
 		 */
-		virtual void printTable() const {}
+		// virtual void printTable() const {}
 
 		/**
 		 * Print all elements in the configuration
