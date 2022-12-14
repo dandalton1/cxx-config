@@ -1,9 +1,15 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.11.0 )
 PROJECT(cxx-config)
 
+# Use GNUInstallDirs for Unix predefined directories
+INCLUDE(GNUInstallDirs)
 
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin CACHE INTERNAL "" FORCE)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib CACHE INTERNAL "" FORCE)
+
+#####################################
+# Options
+#####################################
 
 OPTION(BUILD_SHARED_LIBS "Build package with shared libraries." ON)
 IF(NOT BUILD_SHARED_LIBS)
@@ -28,30 +34,20 @@ ELSE()
 	SET (CMAKE_POSITION_INDEPENDENT_CODE FALSE)
 ENDIF()
 
-# Find and include libxml2 for supporting configuration.
-FIND_PACKAGE(LibXml2)
-IF ( LIBXML2_FOUND )
-	MESSAGE(STATUS "Using xml2 version ${LIBXML2_VERSION_STRING}.")
-ELSE()
-ENDIF()
 
-FILE(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-FILE(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+FILE(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 
-ADD_LIBRARY(cxx-config ${SOURCE_FILES} ${HEADER_FILES})
-TARGET_INCLUDE_DIRECTORIES(cxx-config PRIVATE ${JSONC_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIR}
-										PUBLIC
-											${CMAKE_CURRENT_SOURCE_DIR}/
-											$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-											$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-											$<INSTALL_INTERFACE:include>)
+ADD_LIBRARY(cxx-config INTERFACE )
 
-IF (BUILD_SHARED_LIBS AND CMAKE_SIZEOF_VOID_P EQUAL 8)
-	SET_PROPERTY(TARGET cxx-config PROPERTY POSITION_INDEPENDENT_CODE ON)
-ENDIF()
+# Required c++ features - use to determine what C++ version is required
+TARGET_COMPILE_FEATURES(cxx-config INTERFACE cxx_constexpr cxx_noexcept cxx_override
+	cxx_sizeof_member cxx_static_assert cxx_decltype cxx_defaulted_functions cxx_relaxed_constexpr
+	cxx_default_function_template_args)
 
-TARGET_LINK_LIBRARIES(cxx-config PUBLIC yaml)
-
+TARGET_INCLUDE_DIRECTORIES(cxx-config INTERFACE
+											$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+											$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
+											$<INSTALL_INTERFACE:src>)
 
 INSTALL(TARGETS cxx-config DESTINATION lib)
 

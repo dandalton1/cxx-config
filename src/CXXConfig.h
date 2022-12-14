@@ -19,7 +19,6 @@
 #define CXXCONF_NODISCARD
 #endif
 
-struct json_object;
 namespace cxxconfig {
 
 	template <typename T> class ValueType;
@@ -222,29 +221,11 @@ namespace cxxconfig {
 		// TODO add support for the IO object.
 		// virtual void printTable(Ref<IO> &io) const;
 
-		// // TODO deal with the name.
-		// virtual void save(Ref<IO> &io, ConfigFormat format);
-
-		// virtual void parseConfigFile(Ref<IO> &io, ConfigFormat format = ConfigFormat::Unknown);
-
 		// virtual size_t getNrElements() const noexcept;
 		// virtual const std::vector<std::string&>& getKeys() const;
 
-	  protected:
-		// virtual void parse_xml(Ref<IO> &io);
-		// virtual void parse_yaml(Ref<IO> &io);
-		// virtual void parse_json(Ref<IO> &io);
-		// virtual void save_xml(Ref<IO> &io);
-		// virtual void save_yaml(Ref<IO> &io);
-		// virtual void save_json(Ref<IO> &io);
-
 	  public:
 		// virtual Config *getSuperInstance();
-
-	  private:
-		// TODO deal with the type.
-		// static void save_json_recursive_config(const Config *config, struct json_object *root);
-		// static void parse_json_recursive_config(Config *config, struct json_object *root);
 	};
 
 } // namespace cxxconfig

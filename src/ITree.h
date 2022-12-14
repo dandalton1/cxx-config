@@ -119,8 +119,12 @@ namespace cxxconfig {
 		}
 
 		/*  TODO determine if iterator can be added.    */
-		//		virtual TIterator<T> begin();
-		//		virtual TIterator<T> end();
+		// virtual std::iterator<T> begin(){
+		//
+		//}
+		// virtual TIterator<T> end(){
+		//	return I
+		//}
 
 	  protected: /*  */
 		void setSibling(ITree<T> *sibling) { this->sibling = sibling; }
